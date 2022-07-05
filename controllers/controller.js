@@ -1,4 +1,6 @@
 const db = require('../models/connection');
+const jwt = require("jsonwebtoken");
+
 const {errorMessage, successMessage, status} = require('../helpers/status');
 const {getCandidateQuery, 
     getExperienceQuery, 
@@ -6,7 +8,8 @@ const {getCandidateQuery,
     updateExperienceQuery,
     getPermissionQuery,
     updatePermissionQuery,
-    insertExperienceQuery
+    insertExperienceQuery,
+    signInQuery
 } = require('../models/queries')
 
 /**
@@ -101,11 +104,31 @@ const addExperience = async (req, res) => {
     }
 }
 
+const signIn = async (req, res) => {
+    const {email, password} = req.body;
+    try {
+        const {rows} = await db.query(signInQuery, [email, password]);
+        var token = jwt.sign({ email: email }, process.env.SECRET, {expiresIn: 86400});
+        if(rows.length>2) {
+            return res.status(status.error).send('Invalid credients');
+        } else {
+            delete rows[0].password;
+            successMessage.data = {...rows[0]};
+            successMessage.token = token;
+            return res.status(status.created).send(successMessage);
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(status.error).send(err);
+    }
+}
+
 module.exports = {
     getCandidate,
     updateCandidate,
     getPermission,
     updatePermission,
     updateExperience,
-    addExperience
+    addExperience,
+    signIn
 }

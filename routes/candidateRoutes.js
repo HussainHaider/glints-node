@@ -6,19 +6,23 @@ const {getCandidate,
     getPermission,
     updatePermission,
     updateExperience,
-    addExperience
+    addExperience,
+    signIn
 } =  require('../controllers/controller');
+const {verifyToken} = require('../middleware/authJwt');
 
 // candidate Routes
-router.get('/candidate/:id', getCandidate);
-router.put('/candidate/:id', updateCandidate);
+router.get('/candidate/:id', verifyToken, getCandidate);
+router.put('/candidate/:id', verifyToken, updateCandidate);
 
 // permission Routes
-router.get('/permission/:id', getPermission);
-router.put('/permission/:id', updatePermission);
+router.get('/permission/:id', verifyToken, getPermission);
+router.put('/permission/:id', verifyToken, updatePermission);
 
 // experince Routes
-router.put('/experience/:id', updateExperience);
-router.post('/experience/:id', addExperience);
+router.put('/experience/:id', verifyToken, updateExperience);
+router.post('/experience/:id', verifyToken, addExperience);
 
+// user Routes
+router.post('/signin', signIn);
 module.exports =  router;
