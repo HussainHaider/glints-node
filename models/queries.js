@@ -3,7 +3,7 @@ const getExperienceQuery = 'SELECT * FROM experience WHERE candidate_id = $1';
 const getPermissionQuery = 'SELECT * FROM permission WHERE candidate_id = $1';
 
 const insertExperienceQuery = `INSERT INTO experience(candidate_id, start_date, end_date, job_title, company, job_description)
-VALUES ($1, $2, $3, $4, $5, $6)`
+VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, job_title`
 
 const updateCandidateQuery = `UPDATE candidate
     SET name = $1,

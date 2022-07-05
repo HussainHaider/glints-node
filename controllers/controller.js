@@ -78,9 +78,9 @@ const updatePermission = async (req, res) => {
 
 const updateExperience = async (req, res) => {
     const id = req.params.id;
-    const {start_date, end_date, job_title, company, job_description} = req.body;
+    const {startDate, endDate, jobTitle, company, jobDescription} = req.body;
     try {
-        await db.query(updateExperienceQuery, [start_date, end_date, job_title, company, job_description, id]);
+        await db.query(updateExperienceQuery, [ startDate, endDate, jobTitle, company, jobDescription, id]);
         return res.status(status.created).send(successMessage);
     } catch (err) {
         console.log(err);
@@ -92,7 +92,8 @@ const addExperience = async (req, res) => {
     const id = req.params.id;
     const {startDate, endDate, jobTitle, company, jobDescription} = req.body;
     try {
-        await db.query(insertExperienceQuery, [id, startDate, endDate, jobTitle, company, jobDescription]);
+        const {rows} = await db.query(insertExperienceQuery, [id, startDate, endDate, jobTitle, company, jobDescription]);
+        successMessage.data = {...rows[0]}
         return res.status(status.created).send(successMessage);
     } catch (err) {
         console.log(err);
